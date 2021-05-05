@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from .models import BlogPost
 from .forms import BlogForm
 
@@ -35,7 +35,7 @@ def edit_blog(request, blog_id):
             return redirect('BlogPost:index')
     
     context = {'blog':blog, 'form':form}
-    render(request, 'BlogPost/edit_blog.html', context)
+    return render(request, 'BlogPost/edit_blog.html', context)
 
 
 

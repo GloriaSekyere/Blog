@@ -12,7 +12,7 @@
             <p><b>{{ title }}</b></p>
             <p>{{ title.date_added|date:'M d, Y H:i' }}</p>
             <p>{{ title.text|linebreaks }}</p>
-            <p><a href="{% url 'BlogPost:edit_blog' blog.id %}">Edit blog post</a></p>
+            <a href="{% url 'BlogPost:edit_blog' title.id %}">Edit blog post</a>
         </li>
         
         {% empty %}
