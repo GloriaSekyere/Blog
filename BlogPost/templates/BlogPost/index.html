@@ -1,14 +1,35 @@
 {% extends "BlogPost/base.html" %}
 
+{% block page_header %}
+
+    <div class="jumbotron">
+
+        <h1 class="display-5">Amazing posts all in one place.</h1>
+
+        <p class="lead">Read all you want. Write all you want.
+            And do not, I repeat, do not, give a damn about 
+            what anyone thinks. 
+            <br>PS: We take no responsibility for your actions.
+        </p>
+        
+        {% if user.is_authenticated %}
+        <h4><a href="{% url 'BlogPost:new_blog' %}">Add new blog post</a></h4>
+
+        {% else %}
+        <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
+            role="button">Register &raquo;</a>
+        
+        {% endif %}
+
+    </div>
+
+{% endblock page_header %}
+
 {% block content %}
-
-    <p>All the blogs you can think of!</p>
-
-    <a href="{% url 'BlogPost:new_blog' %}">Add new blog post</a>
-
-    <ul>
+    
+    <ul class="list-group ">
         {% for title in titles %}
-        <li>
+        <li class="list-group-item">
             <p><b>{{ title }}</b></p>
             <p>{{ title.date_added|date:'M d, Y H:i' }}</p>
             <p>{{ title.text|linebreaks }}</p>
