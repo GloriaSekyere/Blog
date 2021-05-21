@@ -27,14 +27,16 @@
     
     <ul class="list-group ">
         {% for post in posts %}
+        
         <li class="list-group-item">
-            <a href="{% url 'BlogPost:blog_detail' post.id %}">
-                <b>{{ post }}</b>
+            <img class="rounded-circle account-img avatar" width="75px" height="75px" src="{{ post.owner.profile.image.url }}">
+            <a class="ml-2" href="{% url 'BlogPost:blog_detail' post.id %}">
+                <b>{{ post }}<br><a href="{% url 'BlogPost:user_posts' post.owner.username %}">
+                    <small class="ml-2">{{ post.owner }}</small>
+                </a></b>
             </a>
             
-            <a href="{% url 'BlogPost:user_posts' post.owner.username %}">
-                <small class="ml-2">By {{ post.owner }}</small>
-            </a>
+            
             
             <br><br>
             
