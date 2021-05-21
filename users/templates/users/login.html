@@ -7,15 +7,24 @@
 
 {% block content %}
 
-    <form action="{% url 'users:login' %}" method='post' class="form">
+    <form method='post' class="form">
         {% csrf_token %}
         {% bootstrap_form form %}
 
         {% buttons %}
             <button name="submit" class="btn btn-primary">Log in</button>
+            <small class="text-muted">
+                <a class="ml-2" href="{% url 'users:password_reset' %}">Forgot Password?</a>
+             </small>
         {% endbuttons %}
         
-        <input type="hidden" name="next" value="{% url 'BlogPost:index' %}">
+        
     </form>
+
+    <div class="border-top pt-3">
+        <small class="text-muted">
+           Need an account? <a class="ml-2" href="{% url 'users:register' %}">Register</a>
+        </small>
+    </div>
 
 {% endblock content %}

@@ -8,7 +8,7 @@
 {% block content %}
     
 
-    <form action="{% url 'BlogPost:edit_blog' blog.id %}" method='post' class="form">
+    <form action="{% url 'BlogPost:blog_update' post.id %}" method='post' class="form">
         {% csrf_token %}
         {% bootstrap_form form %}
 

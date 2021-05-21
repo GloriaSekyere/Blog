@@ -1,0 +1,67 @@
+{% extends "BlogPost/base.html" %}
+
+{% block page_header %}
+
+    {% if post_owner == user %}
+        <h3>My Blog Posts ({{ page_obj.paginator.count }})</h3>  
+    
+    {% else %}
+        <h3>{{ post_owner }}'s Blog Posts ({{ page_obj.paginator.count }})</h3> 
+    
+    {% endif %}  
+
+{% endblock page_header %}
+
+
+{% block content %}
+    
+    <ul class="list-group ">
+        
+        {% for post in page_obj %}
+
+            <li class="list-group-item">
+                <a href="{% url 'BlogPost:blog_detail' post.id %}">
+                    <b>{{ post }}</b>
+                </a>
+                <small class="ml-2">By {{ post_owner }}</small>
+                <br><br>
+                <p>{{ post.date_added|date:'M d, Y H:i' }}</p>
+                <p>{{ post.text|linebreaks }}</p>
+
+                {% if post.owner == user%}
+                    <a class='btn btn-outline-primary' href="{% url 'BlogPost:blog_update' post.id %}">Edit</a>
+                    <a class='btn btn-outline-danger ml-2' href="{% url 'BlogPost:blog_delete' post.id %}">Delete</a>
+                {% endif %}
+            </li>
+        
+        {% empty %}
+            <p>No blog posts have been added.</p>
+        
+        {% endfor %}
+
+        {% if page_obj.has_other_pages %}
+            
+            <center><p class="pt-4 mb-4">
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-primary mb-4" href="?page=1">First</a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a class='btn btn-primary mb-4' href="?page={{ num }}">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class='btn btn-outline-primary mb-4' href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                {% endif %}
+            </p></center>
+
+        {% endif %}
+    </ul>
+
+{% endblock content %}

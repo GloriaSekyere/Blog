@@ -135,6 +135,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # My settings
 LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'BlogPost:index'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Heroku settings.
 import django_heroku
@@ -144,3 +148,15 @@ if os.environ.get('DEBUG') == 'TRUE':
     DEBUG = True
 elif os.environ.get('DEBUG') == 'FALSE':
     DEBUG = False
+
+
+
+# SMTP Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')

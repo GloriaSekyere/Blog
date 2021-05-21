@@ -1,0 +1,22 @@
+{% extends "BlogPost/base.html" %}
+
+{% block page_header %}
+{% endblock page_header %}
+
+{% block content %}
+    
+    <ul class="list-group "> 
+        <li class="list-group-item">
+            <p><b>{{ post }}</b><small class="ml-2">By {{ post.owner }}</small></p>
+            <p>{{ post.date_added|date:'M d, Y H:i' }}</p>
+            <p>{{ post.text|linebreaks }}</p>
+
+            {% if post.owner == user%}
+                <a class='btn btn-outline-primary' href="{% url 'BlogPost:blog_update' post.id %}">Edit</a>
+                <a class='btn btn-outline-danger ml-2' href="{% url 'BlogPost:blog_delete' post.id %}">Delete</a>
+            {% endif %}
+            
+        </li> 
+    </ul>
+
+{% endblock content %}

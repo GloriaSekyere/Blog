@@ -7,9 +7,7 @@
         <h1 class="display-5">Amazing posts all in one place.</h1>
 
         <p class="lead">Read all you want. Write all you want.
-            And do not, I repeat, do not, give a damn about 
-            what anyone thinks. 
-            <br>PS: We take no responsibility for your actions.
+            <br>PS: We take no responsibility for your content.
         </p>
         
         {% if user.is_authenticated %}
@@ -28,18 +26,52 @@
 {% block content %}
     
     <ul class="list-group ">
-        {% for title in titles %}
+        {% for post in posts %}
         <li class="list-group-item">
-            <p><b>{{ title }}</b></p>
-            <p>{{ title.date_added|date:'M d, Y H:i' }}</p>
-            <p>{{ title.text|linebreaks }}</p>
-            <a href="{% url 'BlogPost:edit_blog' title.id %}">Edit blog post</a>
+            <a href="{% url 'BlogPost:blog_detail' post.id %}">
+                <b>{{ post }}</b>
+            </a>
+            
+            <a href="{% url 'BlogPost:user_posts' post.owner.username %}">
+                <small class="ml-2">By {{ post.owner }}</small>
+            </a>
+            
+            <br><br>
+            
+            <p>{{ post.date_added|date:'M d, Y H:i' }}</p>
+            <p>{{ post.text|linebreaks }}</p>
+
         </li>
         
         {% empty %}
             <p>No blog posts have been added.</p>
         
         {% endfor %}
+
+         
+        {% if page_obj.has_other_pages %}
+            
+            <center><p class="pt-4 mb-4">
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-primary mb-4" href="?page=1">First</a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a class='btn btn-primary mb-4' href="?page={{ num }}">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class='btn btn-outline-primary mb-4' href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                {% endif %}
+            </p></center>
+
+        {% endif %}  
     </ul>
 
 {% endblock content %}

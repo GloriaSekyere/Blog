@@ -1,3 +1,4 @@
+{% load static %}
 {% load bootstrap4 %}
 
 <!doctype html>
@@ -32,7 +33,7 @@
             
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <span class="navbar-text">Hello, {{ user.username }}.</span>
+                <a class="nav-link" href = "{% url 'users:profile' %}">{{ user.username }}, Profile</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href = "{% url 'users:logout' %}">Logout</a>
@@ -61,6 +62,12 @@
         </div>
 
         <div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
             {% block content %}{% endblock content %}
         </div>
 

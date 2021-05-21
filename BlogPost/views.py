@@ -1,52 +1,75 @@
-from django.shortcuts import render, redirect, reverse
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
-
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from .models import BlogPost
-from .forms import BlogForm
+from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import (ListView, 
+                                DetailView, 
+                                CreateView, 
+                                UpdateView,
+                                DeleteView)
 
-# Create your views here.
 
-def index(request):
-    """Home page displaying Blog Posts"""
-    titles = BlogPost.objects.order_by('-date_added')
-    context = {'titles':titles}
-    return render(request, 'BlogPost/index.html', context)
+class BlogList(ListView):
+    model = BlogPost
+    template_name = 'BlogPost/index.html'
+    context_object_name = 'posts'
+    ordering = ['-date_added']
+    paginate_by = 5
 
-@login_required()
-def new_blog(request):
-    """Add a new blog post"""
+class UserBlogList(ListView):
+    model = BlogPost
+    template_name = 'BlogPost/user_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 5
 
-    if request.method != 'POST':
-        form = BlogForm()
-    else:
-        form = BlogForm(data=request.POST)
-        if form.is_valid():
-            new_blog = form.save(commit=False)
-            new_blog.owner = request.user
-            new_blog.save()
-            return redirect('BlogPost:index')
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return BlogPost.objects.filter(owner=user).order_by('-date_added')
 
-    context = {'form':form}
-    return render(request, 'BlogPost/new_blog.html', context)
 
-@login_required()
-def edit_blog(request, blog_id):
-    blog = BlogPost.objects.get(id=blog_id)
-    if blog.owner != request.user:
-        raise Http404
+class BlogDetail(DetailView):
+    model = BlogPost
+    template_name = 'BlogPost/blog_detail.html'
+    context_object_name = 'post'
 
-    if request.method != 'POST':
-        form = BlogForm(instance=blog)
-    else:
-        form = BlogForm(instance=blog, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('BlogPost:index')
+
+class BlogCreate(LoginRequiredMixin, CreateView):
+    model = BlogPost
+    template_name = 'BlogPost/new_blog.html'
+    fields = ['title','text']
+    success_url = reverse_lazy('BlogPost:index')
     
-    context = {'blog':blog, 'form':form}
-    return render(request, 'BlogPost/edit_blog.html', context)
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
-
+class BlogUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = BlogPost
+    context_object_name = 'post'
+    template_name = 'BlogPost/edit_blog.html'
+    fields = ['title','text']
     
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.owner:
+            return True
+        return False
+
+
+class BlogDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = BlogPost
+    template_name = 'BlogPost/blog_delete.html'
+    context_object_name = 'post'  
+    success_url = reverse_lazy('BlogPost:index')
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.owner:
+            return True
+        return False

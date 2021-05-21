@@ -1,0 +1,31 @@
+{% extends "BlogPost/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    
+    <div class="content-section">
+        <div class="media">
+        <img class="rounded-circle account-img avatar" width="100px" height="100px" src="{{ user.profile.image.url }}">
+        <div class="media-body ml-3">
+            <h2 class="account-heading">{{ user.username }}</h2>
+            <p class="text-secondary">{{ user.email }}</p>
+        </div>
+        </div>
+    </div>
+    
+{% endblock page_header %}
+    
+{% block content %}
+
+        <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group pt-4">
+            {% bootstrap_form u_form %}
+            {% bootstrap_form p_form %}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-primary" type="submit">Update</button>
+        </div>
+        </form>
+
+{% endblock content %}
